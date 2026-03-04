@@ -34,12 +34,13 @@ print_error() {
     echo -e "${RED}[✗] $1${NC}"
 }
 
-# Check if running as root
-# if [[ $EUID -eq 0 ]]; then
-#   echo "This script should not be run as root"
-#   exit 1
-# fi
+# Check if running as root (WAJIB ROOT)
+if [[ $EUID -ne 0 ]]; then
+    print_error "Script harus dijalankan sebagai root!"
+    exit 1
+fi
 
+print_status "Running as root ✔"
 # Check if we're in the correct directory
 if [[ ! -d "/var/www/pterodactyl" ]]; then
     print_error "Pterodactyl panel not found in /var/www/pterodactyl"
