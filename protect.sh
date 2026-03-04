@@ -47,7 +47,36 @@ if [[ ! -d "/var/www/pterodactyl" ]]; then
     print_error "Please run this script from your Pterodactyl installation directory"
     exit 1
 fi
+# ==================================================
+# CHECK OS SUPPORT (Ubuntu 20 & 22)
+# ==================================================
 
+if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+else
+    print_error "Tidak dapat mendeteksi OS!"
+    exit 1
+fi
+
+if [[ "$ID" != "ubuntu" ]]; then
+    print_error "Script hanya mendukung Ubuntu!"
+    exit 1
+fi
+
+UBU_VER=$(echo "$VERSION_ID" | cut -d '.' -f1)
+
+if [[ "$UBU_VER" != "20" && "$UBU_VER" != "22" ]]; then
+    print_error "Ubuntu $VERSION_ID tidak didukung!"
+    print_warning "Gunakan Ubuntu 20.04 atau 22.04"
+    exit 1
+fi
+
+print_status "Ubuntu $VERSION_ID terdeteksi ✔"
+#CHECK PTERODACTYL INSTALLATION
+if [[ ! -f "/var/www/pterodactyl/artisan" ]]; then
+    print_error "Pterodactyl tidak valid!"
+    exit 1
+fi
 # Backup directory
 BACKUP_DIR="/var/www/pterodactyl/backups/protect_zero_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
